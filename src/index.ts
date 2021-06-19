@@ -13,6 +13,7 @@ export interface NodePolyfillsOptions {
   sourceMap?: boolean;
   include?: Array<string | RegExp> | string | RegExp | null;
   exclude?: Array<string | RegExp> | string | RegExp | null;
+  excludePolyfills?: Array<string>;
   injectProcess?: boolean;
   injectBuffer?: boolean;
   injectGlobal?: boolean;
