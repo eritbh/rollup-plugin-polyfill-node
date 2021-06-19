@@ -13,7 +13,11 @@ export interface NodePolyfillsOptions {
   sourceMap?: boolean;
   include?: Array<string | RegExp> | string | RegExp | null;
   exclude?: Array<string | RegExp> | string | RegExp | null;
-  excludePolyfills?: Array<string>;
+  injectProcess?: boolean;
+  injectBuffer?: boolean;
+  injectGlobal?: boolean;
+  injectFilename?: boolean;
+  injectDirname?: boolean;
 }
 
 export default function (opts: NodePolyfillsOptions = {}) {
@@ -21,17 +25,17 @@ export default function (opts: NodePolyfillsOptions = {}) {
   for (const moduleName of opts.excludePolyfills || []) {
     mods.delete(moduleName);
   }
+  const globalsToInject = {};
+  if (opts.injectProcess !== false) globalsToInject.process = PREFIX + "process";
+  if (opts.injectBuffer !== false) globalsToInject.Buffer = [PREFIX + "buffer", "Buffer"];
+  if (opts.injectGlobal !== false) globalsToInject.global = PREFIX + "global";
+  if (opts.injectFilename !== false) globalsToInject.__filename = FILENAME_PATH;
+  if (opts.injectDirname !== false) globalsToInject.__dirname = DIRNAME_PATH;
   const injectPlugin = inject({
     include: opts.include === undefined ? ['node_modules/**/*.js'] : undefined,
     exclude: opts.exclude,
     sourceMap: opts.sourceMap,
-    modules: {
-      process: PREFIX + "process",
-      Buffer: [PREFIX + "buffer", "Buffer"],
-      global: PREFIX + 'global',
-      __filename: FILENAME_PATH,
-      __dirname: DIRNAME_PATH,
-    },
+    modules: globalsToInject,
   });
   const basedir = opts.baseDir || "/";
   const dirs = new Map<string, string>();
