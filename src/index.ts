@@ -13,10 +13,14 @@ export interface NodePolyfillsOptions {
   sourceMap?: boolean;
   include?: Array<string | RegExp> | string | RegExp | null;
   exclude?: Array<string | RegExp> | string | RegExp | null;
+  excludePolyfills?: Array<string>;
 }
 
 export default function (opts: NodePolyfillsOptions = {}) {
   const mods = getModules();
+  for (const moduleName of opts.excludePolyfills || []) {
+    mods.delete(moduleName);
+  }
   const injectPlugin = inject({
     include: opts.include === undefined ? ['node_modules/**/*.js'] : undefined,
     exclude: opts.exclude,
