@@ -1,5 +1,5 @@
 // @ts-ignore
-import inject from "@rollup/plugin-inject";
+import inject, {Injectment} from "@rollup/plugin-inject";
 import { getModules } from "./modules";
 import { dirname, relative, resolve, join } from "path";
 import { randomBytes } from "crypto";
@@ -25,7 +25,7 @@ export default function (opts: NodePolyfillsOptions = {}) {
   for (const moduleName of opts.excludePolyfills || []) {
     mods.delete(moduleName);
   }
-  const globalsToInject = {};
+  const globalsToInject = {} as {[k: string]: Injectment};
   if (opts.injectProcess !== false) globalsToInject.process = PREFIX + "process";
   if (opts.injectBuffer !== false) globalsToInject.Buffer = [PREFIX + "buffer", "Buffer"];
   if (opts.injectGlobal !== false) globalsToInject.global = PREFIX + "global";
